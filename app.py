@@ -18,6 +18,7 @@ GPIO.setup(DOWN_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # down
 GPIO.setup(UP_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # up
 GPIO.setup(RIGHT_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # white/right
 GPIO.setup(ENTER_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # enter
+GPIO.setup(LED_GPIO, GPIO.OUT)  # LED
 
 
 class PerpetualTimer:
@@ -295,25 +296,28 @@ def WhiteWin():
 t = PerpetualTimer(1, second)
 t.start()
 
-
-while True:
-    if state == STATE_START:
-        Start()
-    elif state == STATE_SELECT:
-        Select()
-    elif state == STATE_CH_HOUR:
-        ChangeHour()
-    elif state == STATE_CH_MINUTE:
-        ChangeMinute()
-    elif state == STATE_CH_MODE:
-        ChangeMode()
-    elif state == STATE_BEGIN:
-        Begin()
-    elif state == STATE_BLACK_MOVE:
-        Black()
-    elif state == STATE_WHITE_MOVE:
-        White()
-    elif state == STATE_BLACK_WIN:
-        BlackWin()
-    elif state == STATE_WHITE_WIN:
-        WhiteWin()
+try:
+    while True:
+        GPIO.output(LED_GPIO, True)
+        if state == STATE_START:
+            Start()
+        elif state == STATE_SELECT:
+            Select()
+        elif state == STATE_CH_HOUR:
+            ChangeHour()
+        elif state == STATE_CH_MINUTE:
+            ChangeMinute()
+        elif state == STATE_CH_MODE:
+            ChangeMode()
+        elif state == STATE_BEGIN:
+            Begin()
+        elif state == STATE_BLACK_MOVE:
+            Black()
+        elif state == STATE_WHITE_MOVE:
+            White()
+        elif state == STATE_BLACK_WIN:
+            BlackWin()
+        elif state == STATE_WHITE_WIN:
+            WhiteWin()
+except:
+    GPIO.cleanup()
