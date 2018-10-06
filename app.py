@@ -134,17 +134,17 @@ def ChangeHour():
         print(strToPrint)
         strchange = False
 
-    up_state = GPIO.input(UP_GPIO)
-    down_state = GPIO.input(DOWN_GPIO)
+    right_state = GPIO.input(RIGHT_GPIO)
+    left_state = GPIO.input(LEFT_GPIO)
     enter_state = GPIO.input(ENTER_GPIO)
 
-    if not up_state:
+    if not right_state:
         if hourstart < 10:
             hourstart += 1
         time.sleep(0.2)
         strchange = True
 
-    if not down_state:
+    if not left_state:
         if hourstart > 0:
             hourstart -= 1
         time.sleep(0.2)
@@ -164,11 +164,11 @@ def ChangeMinute():
         print(strToPrint)
         strchange = False
 
-    up_state = GPIO.input(UP_GPIO)
-    down_state = GPIO.input(DOWN_GPIO)
+    right_state = GPIO.input(RIGHT_GPIO)
+    left_state = GPIO.input(LEFT_GPIO)
     enter_state = GPIO.input(ENTER_GPIO)
 
-    if not up_state:
+    if not right_state:
         minutestart += 1
         if minutestart == 60:
             if hourstart < 10:
@@ -179,7 +179,7 @@ def ChangeMinute():
         time.sleep(0.2)
         strchange = True
 
-    if not down_state:
+    if not left_state:
         minutestart -= 1
         if minutestart == -1:
             if hourstart > 1:
