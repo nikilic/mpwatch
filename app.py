@@ -14,8 +14,6 @@ clear = lambda: os.system('clear')
 GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(LEFT_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # black/left
-GPIO.setup(DOWN_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # down
-GPIO.setup(UP_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # up
 GPIO.setup(RIGHT_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # white/right
 GPIO.setup(ENTER_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # enter
 GPIO.setup(LED_GPIO, GPIO.OUT)  # LED
