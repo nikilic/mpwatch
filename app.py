@@ -52,7 +52,7 @@ def second():
                 blackhour -= 1
                 if blackhour < 0:
                     state = STATE_WHITE_WIN
-                    strchange = True
+        strchange = True
 
     if state == STATE_WHITE_MOVE:
         whitesecond -= 1
@@ -64,7 +64,7 @@ def second():
                 whitehour -= 1
                 if whitehour < 0:
                     state = STATE_BLACK_WIN
-                    strchange = True
+        strchange = True
 
 
 def Start():
@@ -82,7 +82,7 @@ def Start():
 def Select():
     global hourstart, minutestart, menuselect, strchange, state
     if strchange:
-        strToPrint = hourstart+":"+minutestart+":0     | "
+        strToPrint = str(hourstart)+":"+str(minutestart)+":0     | "
         if menuselect == 0:
             strToPrint += ">>CH. HOUR<< | CH. MINUTE | CH. MODE | START"
         elif menuselect == 1:
@@ -129,7 +129,7 @@ def Select():
 def ChangeHour():
     global strchange, hourstart, state
     if strchange:
-        strToPrint = "Hours of play: " + hourstart
+        strToPrint = "Hours of play: " + str(hourstart)
         clear()
         print(strToPrint)
         strchange = False
@@ -159,7 +159,7 @@ def ChangeHour():
 def ChangeMinute():
     global strchange, hourstart, minutestart, state
     if strchange:
-        strToPrint = "Minutes of play: " + minutestart
+        strToPrint = "Minutes of play: " + str(minutestart)
         clear()
         print(strToPrint)
         strchange = False
@@ -215,7 +215,7 @@ def Begin():
     global strchange, state, blackhour, blackminute, blacksecond, whitehour, whiteminute, whitesecond
     if strchange:
         clear()
-        print("GAME READY TO BEGIN. TIME: " + hourstart + ":" + minutestart + ":0 | Press white to begin...")
+        print("GAME READY TO BEGIN. TIME: " + str(hourstart) + ":" + str(minutestart) + ":0 | Press white to begin...")
         strchange = False
 
     blackhour = hourstart
@@ -238,14 +238,14 @@ def Black():
     if strchange:
         clear()
         print("Black to play.")
-        print("Black time: " + blackhour + ":" + blackminute + ":" + blacksecond)
-        print("White time: " + whitehour + ":" + whiteminute + ":" + whitesecond)
+        print("Black time: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond))
+        print("White time: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
         strchange = False
 
     black_state = GPIO.input(LEFT_GPIO)
 
     if not black_state:
-        state = STATE_BLACK_MOVE
+        state = STATE_WHITE_MOVE
         strchange = True
 
 
@@ -254,8 +254,8 @@ def White():
     if strchange:
         clear()
         print("White to play.")
-        print("Black time: " + blackhour + ":" + blackminute + ":" + blacksecond)
-        print("White time: " + whitehour + ":" + whiteminute + ":" + whitesecond)
+        print("Black time: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond))
+        print("White time: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
         strchange = False
 
     white_state = GPIO.input(RIGHT_GPIO)
@@ -296,28 +296,25 @@ def WhiteWin():
 t = PerpetualTimer(1, second)
 t.start()
 
-try:
-    while True:
-        GPIO.output(LED_GPIO, True)
-        if state == STATE_START:
-            Start()
-        elif state == STATE_SELECT:
-            Select()
-        elif state == STATE_CH_HOUR:
-            ChangeHour()
-        elif state == STATE_CH_MINUTE:
-            ChangeMinute()
-        elif state == STATE_CH_MODE:
-            ChangeMode()
-        elif state == STATE_BEGIN:
-            Begin()
-        elif state == STATE_BLACK_MOVE:
-            Black()
-        elif state == STATE_WHITE_MOVE:
-            White()
-        elif state == STATE_BLACK_WIN:
-            BlackWin()
-        elif state == STATE_WHITE_WIN:
-            WhiteWin()
-except:
-    GPIO.cleanup()
+while True:
+    GPIO.output(LED_GPIO, True)
+    if state == STATE_START:
+        Start()
+    elif state == STATE_SELECT:
+        Select()
+    elif state == STATE_CH_HOUR:
+        ChangeHour()
+    elif state == STATE_CH_MINUTE:
+        ChangeMinute()
+    elif state == STATE_CH_MODE:
+        ChangeMode()
+    elif state == STATE_BEGIN:
+        Begin()
+    elif state == STATE_BLACK_MOVE:
+        Black()
+    elif state == STATE_WHITE_MOVE:
+        White()
+    elif state == STATE_BLACK_WIN:
+        BlackWin()
+    elif state == STATE_WHITE_WIN:
+        WhiteWin()
