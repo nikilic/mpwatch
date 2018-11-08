@@ -387,11 +387,11 @@ def Black():
         if not blackflag and not whiteflag:
             lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + " " + str(count) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
         elif not blackflag and whiteflag:
-            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + " " + str(count) "\nWhite: " + str(whiteperiod) + "/" + str(whitetime))
+            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + " " + str(count) + "\nWhite: " + str(whiteperiod) + "/" + str(whitetime))
         elif blackflag and not whiteflag:
-            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + " " + str(count) "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
+            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + " " + str(count) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
         elif blackflag and whiteflag:
-            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + " " + str(count) "\nWhite: " + str(whiteperiod) + "/" + str(whitetime))
+            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + " " + str(count) + "\nWhite: " + str(whiteperiod) + "/" + str(whitetime))
         strchange = False
 
     black_state = GPIO.input(LEFT_GPIO)
