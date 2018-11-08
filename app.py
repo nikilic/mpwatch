@@ -23,7 +23,7 @@ blackperiod = 0
 whiteperiod = 0
 blacktime = 0
 whitetime = 0
-count = 0
+count = 1
 
 
 state = 0
@@ -364,7 +364,7 @@ def Begin():
     blackperiod = byoperiod
     blacktime = byotime
     blackflag = False
-    count = 0
+    count = 1
 
     whitehour = hourstart
     whiteminute = minutestart
