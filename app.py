@@ -8,8 +8,8 @@ from config import *
 from flask import Flask, request
 app = Flask(__name__)
 
-global state, written, hourstart, minutestart, menuselect, strchange, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, blackcount
-global whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, whitecount, modeselect, byoperiod, byotime
+global state, written, hourstart, minutestart, menuselect, strchange, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag
+global whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, modeselect, byoperiod, byotime, count
 
 blackhour = 0
 blackminute = 0
@@ -23,8 +23,8 @@ blackperiod = 0
 whiteperiod = 0
 blacktime = 0
 whitetime = 0
-blackcount = 0
-whitecount = 0
+count = 0
+
 
 state = 0
 written = 0
@@ -74,7 +74,7 @@ class PerpetualTimer:
 
 
 def second():
-    global blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, state, strchange, blackcount, whitecount
+    global blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, state, strchange
     while True:
         if state == STATE_BLACK_MOVE:
             if not blackflag:
@@ -95,7 +95,6 @@ def second():
                     if blackperiod < 0:
                         state = STATE_WHITE_WIN
             strchange = True
-            blackcount += 1
 
         if state == STATE_WHITE_MOVE:
             if not whiteflag:
@@ -116,7 +115,6 @@ def second():
                     if whiteperiod < 0:
                         state = STATE_BLACK_WIN
             strchange = True
-            whitecount += 1
         time.sleep(1.0)
 
 
@@ -354,7 +352,7 @@ def ChangeModeTime():
 
 
 def Begin():
-    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, blackcount, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, whitecount
+    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, count
     if strchange:
         lcd.clear()
         lcd.message("READY TO BEGIN.\nTIME: " + str(hourstart) + ":" + str(minutestart) + ":0")
@@ -366,7 +364,7 @@ def Begin():
     blackperiod = byoperiod
     blacktime = byotime
     blackflag = False
-    blackcount = 0
+    count = 0
 
     whitehour = hourstart
     whiteminute = minutestart
@@ -374,7 +372,6 @@ def Begin():
     whiteperiod = byoperiod
     whitetime = byotime
     whiteflag = False
-    whitecount = 0
 
     white_state = GPIO.input(RIGHT_GPIO)
 
@@ -384,17 +381,17 @@ def Begin():
 
 
 def Black():
-    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, blackcount, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag
+    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, count
     if strchange:
         lcd.clear()
         if not blackflag and not whiteflag:
-            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + str(blackcount) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
+            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + " " + str(count) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
         elif not blackflag and whiteflag:
-            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + str(blackcount) + "\nWhite: " + str(whiteperiod) + "/" + str(whitetime))
+            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + " " + str(count) "\nWhite: " + str(whiteperiod) + "/" + str(whitetime))
         elif blackflag and not whiteflag:
-            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + str(blackcount) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
+            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + " " + str(count) "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond))
         elif blackflag and whiteflag:
-            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + str(blackcount) + "\nWhite: " + str(whiteperiod) + "/" + str(whitetime))
+            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + " " + str(count) "\nWhite: " + str(whiteperiod) + "/" + str(whitetime))
         strchange = False
 
     black_state = GPIO.input(LEFT_GPIO)
@@ -402,22 +399,23 @@ def Black():
     if not black_state:
         if blackflag:
             blacktime = byotime
+        count += 1
         state = STATE_WHITE_MOVE
         strchange = True
 
 
 def White():
-    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, whitecount
+    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, count
     if strchange:
         lcd.clear()
         if not blackflag and not whiteflag:
-            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond) + str(whitecount))
+            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond) + " " + str(count))
         elif not blackflag and whiteflag:
-            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + "\nWhite: " + str(whiteperiod) + "/" + str(whitetime) + str(whitecount))
+            lcd.message("Black: " + str(blackhour) + ":" + str(blackminute) + ":" + str(blacksecond) + "\nWhite: " + str(whiteperiod) + "/" + str(whitetime) + " " + str(count))
         elif blackflag and not whiteflag:
-            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond) + str(whitecount))
+            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + "\nWhite: " + str(whitehour) + ":" + str(whiteminute) + ":" + str(whitesecond) + " " + str(count))
         elif blackflag and whiteflag:
-            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + "\nWhite: " + str(whiteperiod) + "/" + str(whitetime) + str(whitecount))
+            lcd.message("Black: " + str(blackperiod) + "/" + str(blacktime) + "\nWhite: " + str(whiteperiod) + "/" + str(whitetime) + " " + str(count))
         strchange = False
 
     white_state = GPIO.input(RIGHT_GPIO)
@@ -425,6 +423,7 @@ def White():
     if not white_state:
         if whiteflag:
             whitetime = byotime
+        count += 1
         state = STATE_BLACK_MOVE
         strchange = True
 
