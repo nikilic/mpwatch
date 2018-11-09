@@ -493,7 +493,7 @@ thread.start_new_thread(Main, ())
 @app.route("/status")
 def status():
     global state, hourstart, minutestart, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, byoperiod, byotime, count
-    output = str(count) + "-" + str(hourstart) + "-" + str(minutestart) + "-" + str(blackhour) + "-" + str(blackminute) + "-" + str(blacksecond) + "-" + str(blackperiod) + "-" + str(blacktime) + "-" + str(blackflag) + "-" + str(whitehour) + "-" + str(whiteminute) + "-" + str(whitesecond) + "-" + str(whiteperiod) + "-" + str(whitetime) + "-" + str(whiteflag) + "-" + str(byoperiod) + "-" + str(byotime) + "-" + str(count)
+    output = str(state) + "-" + str(hourstart) + "-" + str(minutestart) + "-" + str(blackhour) + "-" + str(blackminute) + "-" + str(blacksecond) + "-" + str(blackperiod) + "-" + str(blacktime) + "-" + str(blackflag) + "-" + str(whitehour) + "-" + str(whiteminute) + "-" + str(whitesecond) + "-" + str(whiteperiod) + "-" + str(whitetime) + "-" + str(whiteflag) + "-" + str(byoperiod) + "-" + str(byotime) + "-" + str(count)
     return output
 
 @app.route("/settime", methods = ['POST'])
