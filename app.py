@@ -493,15 +493,17 @@ thread.start_new_thread(Main, ())
 @app.route("/status")
 def status():
     global state, hourstart, minutestart, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, byoperiod, byotime, count
-    output = str(state) + "-" + str(hourstart) + "-" + str(minutestart) + "-" + str(blackhour) + "-" + str(blackminute) + "-" + str(blacksecond) + "-" + str(blackperiod) + "-" + str(blacktime) + "-" + str(blackflag) + "-" + str(whitehour) + "-" + str(whiteminute) + "-" + str(whitesecond) + "-" + str(whiteperiod) + "-" + str(whitetime) + "-" + str(whiteflag) + "-" + str(byoperiod) + "-" + str(byotime) + "-" + str(count)
+    output = str(count) + "-" + str(hourstart) + "-" + str(minutestart) + "-" + str(blackhour) + "-" + str(blackminute) + "-" + str(blacksecond) + "-" + str(blackperiod) + "-" + str(blacktime) + "-" + str(blackflag) + "-" + str(whitehour) + "-" + str(whiteminute) + "-" + str(whitesecond) + "-" + str(whiteperiod) + "-" + str(whitetime) + "-" + str(whiteflag) + "-" + str(byoperiod) + "-" + str(byotime) + "-" + str(count)
     return output
 
 @app.route("/settime", methods = ['POST'])
 def settime():
-    global state, hourstart, minutestart, strchange
+    global state, hourstart, minutestart, strchange, byoperiod, byotime
     if state == STATE_SELECT:
         hourstart = int(request.form["hour"])
         minutestart = int(request.form["minute"])
+        byoperiod = int(request.form["byoperiod"])
+        byotime = int(request.form["byotime"])
         state = STATE_BEGIN
         strchange = True
         return "OK"
