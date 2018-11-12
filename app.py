@@ -9,7 +9,7 @@ from flask import Flask, request
 app = Flask(__name__)
 
 global state, written, hourstart, minutestart, menuselect, strchange, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag
-global whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, modeselect, byoperiod, byotime, count
+global whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, modeselect, byoperiod, byotime, count, swtstate
 
 blackhour = 0
 blackminute = 0
@@ -381,7 +381,7 @@ def Begin():
 
 
 def Black():
-    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, count
+    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, count, swstate
     if strchange:
         lcd.clear()
         if not blackflag and not whiteflag:
@@ -395,6 +395,7 @@ def Black():
         strchange = False
 
     black_state = GPIO.input(LEFT_GPIO)
+    enter_state = GPIO.input(ENTER_GPIO)
 
     if not black_state:
         if blackflag:
@@ -403,9 +404,14 @@ def Black():
         state = STATE_WHITE_MOVE
         strchange = True
 
+    if not enter_state:
+        swstate = 0
+        state = STATE_SET_WINNER
+        strchange = True
+
 
 def White():
-    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, count
+    global strchange, state, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, count, swstate
     if strchange:
         lcd.clear()
         if not blackflag and not whiteflag:
@@ -419,6 +425,7 @@ def White():
         strchange = False
 
     white_state = GPIO.input(RIGHT_GPIO)
+    enter_state = GPIO.input(ENTER_GPIO)
 
     if not white_state:
         if whiteflag:
@@ -426,6 +433,57 @@ def White():
         count += 1
         state = STATE_BLACK_MOVE
         strchange = True
+
+    if not enter_state:
+        swstate = 0
+        state = STATE_SET_WINNER
+        strchange = True
+
+
+def SetWinner():
+    global swstate, strchange, state, count
+    if strchange:
+        lcd.clear()
+        if swstate == 0:
+            lcd.message("Enter to cancel\nBlack won?")
+        elif swstate == 3:
+            lcd.message("Not matching!\nTry again")
+        else:
+            lcd.message("Enter to cancel\nWhite won?")
+        strchange = False
+
+    white_state = GPIO.input(RIGHT_GPIO)
+    black_state = GPIO.input(LEFT_GPIO)
+    enter_state = GPIO.input(ENTER_GPIO)
+        
+    if not white_state:
+        if swstate == 0:
+            swstate = 2
+        elif swstate == 1:
+            swstate = 3
+        elif swstate == 2:
+            state = STATE_WHITE_WIN
+        else:
+            swstate = 0
+        strchange = True
+
+    if not black_state:
+        if swstate == 1:
+            swstate = 2
+        elif swstate == 1:
+            state = STATE_WHITE_WIN
+        elif swstate == 2:
+            swstate = 3
+        else:
+            swstate = 0
+        strchange = True
+
+    if not enter_state:
+        if count % 2 == 1:
+            state = STATE_BLACK_MOVE
+        else:
+            state = STATE_WHITE_MOVE
+        strchange = True            
 
 
 def BlackWin():
@@ -482,6 +540,8 @@ def Main():
             BlackWin()
         elif state == STATE_WHITE_WIN:
             WhiteWin()
+        elif state == STATE_SET_WINNER:
+            SetWinner()
         time.sleep(0.1)
     
 thread.start_new_thread(second, ())
@@ -493,7 +553,7 @@ thread.start_new_thread(Main, ())
 @app.route("/status")
 def status():
     global state, hourstart, minutestart, blackhour, blackminute, blacksecond, blackperiod, blacktime, blackflag, whitehour, whiteminute, whitesecond, whiteperiod, whitetime, whiteflag, byoperiod, byotime, count
-    output = str(count) + "-" + str(hourstart) + "-" + str(minutestart) + "-" + str(blackhour) + "-" + str(blackminute) + "-" + str(blacksecond) + "-" + str(blackperiod) + "-" + str(blacktime) + "-" + str(blackflag) + "-" + str(whitehour) + "-" + str(whiteminute) + "-" + str(whitesecond) + "-" + str(whiteperiod) + "-" + str(whitetime) + "-" + str(whiteflag) + "-" + str(byoperiod) + "-" + str(byotime) + "-" + str(count)
+    output = str(state) + "-" + str(hourstart) + "-" + str(minutestart) + "-" + str(blackhour) + "-" + str(blackminute) + "-" + str(blacksecond) + "-" + str(blackperiod) + "-" + str(blacktime) + "-" + str(blackflag) + "-" + str(whitehour) + "-" + str(whiteminute) + "-" + str(whitesecond) + "-" + str(whiteperiod) + "-" + str(whitetime) + "-" + str(whiteflag) + "-" + str(byoperiod) + "-" + str(byotime) + "-" + str(count)
     return output
 
 @app.route("/settime", methods = ['POST'])
